@@ -1,0 +1,7 @@
+﻿namespace MovieApp.Data.Generics
+{
+    public class BaseModel
+    {
+        public Guid Id { get; set; }
+    }
+}

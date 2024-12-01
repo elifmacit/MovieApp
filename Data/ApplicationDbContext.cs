@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MovieApp.Data.Reviews;
 
 namespace MovieApp.Data
 {
@@ -9,5 +10,7 @@ namespace MovieApp.Data
             : base(options)
         {
         }
+
+        public DbSet<Review> Reviews { get; set; }
     }
 }
