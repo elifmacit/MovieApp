@@ -1,0 +1,21 @@
+﻿@using MovieApp.Data.External.Movies
+@model List<Movie>
+
+<div class="d-flex flex-wrap">
+    @foreach (var item in Model)
+    {
+        <div class="card" style="width: 18rem; padding: 20px">
+            <img class="card-img-top" src="@item.Poster">
+            <div class="card-body">
+                <h5 class="card-title">@item.Title</h5>
+                <h6 class="card-title">@item.imdbRating</h6>
+                <h6 class="card-title">@item.Genre</h6>
+                <a href="#" class="btn btn-primary">Details</a>
+            </div>
+        </div>
+    }
+</div>
+
+@{
+    ViewData["Title"] = "Movies Page";
+}

@@ -7,7 +7,7 @@ namespace MovieApp.Data.Reviews
     public class Review:AuditedBaseModel
     {
         public IdentityUser Reviewer { get; set;}
-        public Guid ReviewerId { get; set;}
+        public string ReviewerId { get; set;}
         public string MovieId { get;set;}
         public string? Comment { get; set; }
         [Range(1, 10)]

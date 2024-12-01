@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.Data.DTOs.Reviews;
+using MovieApp.Data.External.Movies;
 using MovieApp.Data.Reviews;
 using MovieApp.Repositories.Reviews;
 
@@ -10,7 +11,7 @@ namespace MovieApp.Services.Reviews
     {
         private readonly IReviewRepository _reviewRepository;
         private readonly IMapper _mapper;
-        public ReviewService(IReviewRepository reviewRepository,IMapper mapper)
+        public ReviewService(IReviewRepository reviewRepository, IMapper mapper)
         {
             _reviewRepository = reviewRepository;
             _mapper = mapper;
@@ -20,6 +21,30 @@ namespace MovieApp.Services.Reviews
         {
             return _mapper.Map<List<ReviewDTO>>(await _reviewRepository.GetAll().ToListAsync());
         }
+
+        public async Task<List<string>> GetMostRatedNMovieIdsAsync(int take=10)
+        {
+            var topRatedMovies = await _reviewRepository.GetAll()
+                .GroupBy(x => x.MovieId)
+                .Select(g => new
+                {
+                    MovieId = g.Key,
+                    AverageRate = g.Average(x => x.Rate)
+                })
+                .OrderByDescending(x => x.AverageRate)
+                .Take(take)
+                .ToListAsync();
+
+            return topRatedMovies.Select(x => x.MovieId).ToList();
+
+        }
+
+        public async Task<List<ReviewDTO>> GetReviewsByMovieIdAsync(string movieId)
+        {
+            return _mapper.Map<List<ReviewDTO>>(await _reviewRepository.GetAll().Where(x => x.MovieId == movieId).ToListAsync());
+        }
+
+
 
         public async Task<ReviewDTO> GetReviewByIdAsync(Guid id)
         {
@@ -41,7 +66,7 @@ namespace MovieApp.Services.Reviews
             await _reviewRepository.DeleteAsync(id);
         }
 
-        public async Task<double> GetRatingByMovieId(string  movieId)
+        public async Task<double> GetRatingByMovieId(string movieId)
         {
             return await _reviewRepository.GetRatingByMovieId(movieId);
         }

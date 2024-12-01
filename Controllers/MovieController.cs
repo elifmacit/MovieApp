@@ -1,14 +1,40 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MovieApp.Data.External.Movies;
+using MovieApp.ExternalServices.OMDB;
+using MovieApp.Services.Reviews;
 
 namespace MovieApp.Controllers
 {
+
     public class MovieController : Controller
     {
-        // GET: MovieController
-        public ActionResult Index()
+        private readonly MovieService _movieService;
+        private readonly ReviewService _reviewService;
+
+        public MovieController(MovieService movieService,ReviewService reviewService)
         {
-            return View();
+            _movieService = movieService;
+            _reviewService = reviewService;
+        }
+        // GET: MovieController
+        [Route("movies")]
+        public async Task<ActionResult> Index()
+        {
+            var movieIds = await _reviewService.GetMostRatedNMovieIdsAsync();
+            movieIds.Add("tt0371746");
+            movieIds.Add("tt0117571");
+            movieIds.Add("tt2975976");
+            movieIds.Add("tt4332232");
+            movieIds.Add("tt0848228");
+
+            
+            List<Movie> movies = new List<Movie>();
+            foreach(var id in movieIds)
+            {
+                movies.Add(await _movieService.GetMovieByIdAsync(id));
+            }
+            return View(movies);
         }
 
         // GET: MovieController/Details/5

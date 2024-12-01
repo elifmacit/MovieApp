@@ -17,5 +17,6 @@ namespace MovieApp.Repositories.Reviews
         {
             return await _dbContext.Set<Review>().Where(x=>x.MovieId == movieId).AverageAsync(x=>x.Rate);
         }
+
     }
 }

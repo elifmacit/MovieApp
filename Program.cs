@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.Data;
+using MovieApp.ExternalServices.OMDB;
+using MovieApp.Repositories.Reviews;
+using MovieApp.Services.Reviews;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,17 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<MovieService>();
+builder.Services.AddScoped<IReviewRepository,ReviewRepository>();
+builder.Services.AddScoped<ReviewService>();
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
+builder.Services.AddHttpClient("OMDBClient", client =>
+{
+    client.BaseAddress = new Uri("https://www.omdbapi.com/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 
 var app = builder.Build();
 

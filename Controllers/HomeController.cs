@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MovieApp.ExternalServices.OMDB;
 using MovieApp.Models;
 using System.Diagnostics;
 
@@ -7,14 +8,17 @@ namespace MovieApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly MovieService _movieService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,MovieService movieService)
         {
             _logger = logger;
+            _movieService = movieService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewData["result"] = _movieService.GetMovieByIdAsync("tt0371746").Result!.Title;
             return View();
         }
 
